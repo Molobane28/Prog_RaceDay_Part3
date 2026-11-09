@@ -7,8 +7,4 @@
     <RootNamespace>RaceDay.MVC_</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 </Project>

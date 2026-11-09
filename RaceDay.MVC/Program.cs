@@ -1,4 +1,6 @@
-namespace RaceDay.MVC_
+using Microsoft.AspNetCore.Authentication.Cookies;
+
+namespace RaceDay.MVC
 {
     public class Program
     {
@@ -6,10 +8,21 @@ namespace RaceDay.MVC_
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // 1. Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            // 2. Register the API Client and Session
             builder.Services.AddHttpClient<RaceDay.MVC.Services.ApiService>();
             builder.Services.AddSession();
+            builder.Services.AddHttpContextAccessor(); // Helps us access sessions easily
+
+            // 3. Register Cookie Authentication for the MVC App
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Account/Login";
+                    options.AccessDeniedPath = "/Account/AccessDenied";
+                });
 
             var app = builder.Build();
 
@@ -17,15 +30,15 @@ namespace RaceDay.MVC_
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
             app.UseRouting();
+
+            // 4. IMPORTANT: Middleware Order Matters!
             app.UseSession();
-
-
+            app.UseAuthentication(); // Must be before Authorization
             app.UseAuthorization();
 
             app.MapStaticAssets();
