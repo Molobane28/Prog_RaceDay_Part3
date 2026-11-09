@@ -10,7 +10,7 @@ namespace RaceDay.MVC.Services
         public ApiService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            // IMPORTANT: Check your API's launchSettings.json to confirm this port!
+            // Make sure this port matches your API's HTTPS port!
             _httpClient.BaseAddress = new Uri("https://localhost:7081/");
         }
 
@@ -19,6 +19,13 @@ namespace RaceDay.MVC.Services
             var json = JsonSerializer.Serialize(data);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             return await _httpClient.PostAsync(endpoint, content);
+        }
+
+        public async Task<HttpResponseMessage> PutAsync(string endpoint, object data)
+        {
+            var json = JsonSerializer.Serialize(data);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            return await _httpClient.PutAsync(endpoint, content);
         }
 
         public async Task<T?> GetAsync<T>(string endpoint)
